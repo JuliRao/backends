@@ -40,7 +40,6 @@ def add_one(json_path, id):
         doc_id=id
     )
     db.session.add(baike_doc)
-    db.session.commit()
 
     for item in content['items']:
         for title in item:
@@ -76,7 +75,12 @@ def add_one(json_path, id):
     )
     db.session.add(baike_pic)
 
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as e:
+        print(e)
+        print(json_path)
+        db.session.rollback()
 
 
 def add_all():
@@ -85,14 +89,7 @@ def add_all():
     for file in files:
         if file.endswith('.json'):
             json_path = os.path.join('baike', file)
-            try:
-                add_one(json_path, cnt)
-            except Exception as e:
-                print(e)
-                print(json_path)
-                db.session.rollback()
-                cnt += 1
-                continue
+            add_one(json_path, cnt)
         cnt += 1
 
 
@@ -105,3 +102,9 @@ if __name__ == '__main__':
     db.session.commit()
 
     add_all()
+
+    # db.session.delete(BaiKeItem.query.filter_by(baike_id=0).first())
+    # db.session.delete(BaiKeSection.query.filter_by(baike_id=0).first())
+    # db.session.delete(BaiKePicture.query.filter_by(baike_id=0).first())
+    # db.session.delete(BaiKeDoc.query.filter_by(doc_id=0).first())
+    # db.session.commit()

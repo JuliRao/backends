@@ -53,13 +53,19 @@ def search(text, region='all'):
     words = process(text)
     if region == 'all':
         return tf_idf(words, ['baike_title', 'baike_section', 'zhidao_question', 'zhidao_answer'])
-    elif region != 'picture':
+    elif region in ['baike_title', 'baike_section', 'zhidao_question', 'zhidao_answer']:
         return tf_idf(words, [region])
     else:
-        # TODO
-        doc_list = tf_idf(words, ['baike_title', 'baike_section', 'zhidao_question', 'zhidao_answer'])
-        url_list = []
-        return url_list
+        print('no such region!!!')
+        assert 0
+
+    # else:
+    #     url_list = []
+    #     doc_list = tf_idf(words, ['baike_title', 'baike_section', 'zhidao_question', 'zhidao_answer'])
+    #     for doc in doc_list:
+    #         for pic in doc.pictures:
+    #             url_list.append(pic.picture_url)
+    #     return url_list
 
 
 def get_page(id):
@@ -76,3 +82,4 @@ if __name__ == '__main__':
             print(item.description)
         else:
             print(item.question)
+

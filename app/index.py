@@ -43,7 +43,14 @@ def index_baike():
             idx.index = saved
 
         page.is_indexed = True
-        db.session.commit()
+
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            print(page.title)
+            db.session.rollback()
+
         if ct % 200 == 0:
             print('process file', ct)
         ct += 1
@@ -80,7 +87,14 @@ def index_zhidao():
             idx.index = saved
 
         page.is_indexed = True
-        db.session.commit()
+
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            print(page.question)
+            db.session.rollback()
+
         if ct % 200 == 0:
             print('process file', ct)
         ct += 1
