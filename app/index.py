@@ -6,8 +6,21 @@ from app import db
 def index_baike():
     ct = 0
     for page in BaiKeDoc.query.filter_by(is_indexed = False):
-        words = process(page.title)
-        for word, num in words.items():
+        title_words = {}
+        section_words = {}
+
+        title_words.update(process(page.title))
+        section_words.update(process(page.description))
+
+        for section in page.sections:
+            title_words.update(process(section.section_title))
+            section_words.update(process(section.text))
+
+        for item in page.items:
+            section_words.update(process(item.item_title))
+            section_words.update(process(item.text))
+
+        for word, num in title_words.items():
             li = WordIndex.query.filter_by(word = word)
             if li.count() > 0:
                 idx = li[0]
@@ -18,9 +31,6 @@ def index_baike():
             saved['baike_title'][page.doc_id] = num
             idx.index = saved
 
-        section_words = {}
-        for section in page.sections:
-            section_words.update(process(section.text))
         for word, num in section_words.items():
             li = WordIndex.query.filter_by(word=word)
             if li.count() > 0:
@@ -34,7 +44,7 @@ def index_baike():
 
         page.is_indexed = True
         db.session.commit()
-        if ct % 200==0:
+        if ct % 200 == 0:
             print('process file', ct)
         ct += 1
     return ct
@@ -84,11 +94,11 @@ if __name__ == '__main__':
     for page in BaiKeDoc.query.filter_by(is_indexed=True):
         page.is_indexed = False
 
-    for page in ZhiDaoDoc.query.filter_by(is_indexed=True):
-        page.is_indexed = False
-
     db.session.commit()
     index_baike()
 
-    db.session.commit()
-    index_zhidao()
+    # for page in ZhiDaoDoc.query.filter_by(is_indexed=True):
+    #     page.is_indexed = False
+    #
+    # db.session.commit()
+    # index_zhidao()

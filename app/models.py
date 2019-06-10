@@ -24,11 +24,19 @@ class ZhiDaoAnswer(db.Model):
     likes = db.Column(db.Integer)
     dislikes = db.Column(db.Integer)
     accepted = db.Column(db.Boolean)
-    picture_url = db.Column(db.Text)
     question = db.relationship('ZhiDaoDoc', backref=db.backref('answers'))
 
     def __str__(self):
         return "<Answer %d for question %d>" % self.answer_id, self.question_id
+
+
+class ZhiDaoPicture(db.Model):
+    __tablename__ = 'zhidao_pic'
+    picture_id = db.Column(db.Integer, unique=True, primary_key=True)
+    question_id = db.Column(db.Integer, db.ForeignKey('zhidao_doc.doc_id'))
+    picture_title = db.Column(db.Text)
+    picture_url = db.Column(db.Text)
+    question = db.relationship('ZhiDaoDoc', backref=db.backref('pictures'))
 
 
 class BaiKeDoc(db.Model):
@@ -47,12 +55,32 @@ class BaiKeSection(db.Model):
     section_id = db.Column(db.Integer, unique=True, primary_key=True)
     baike_id = db.Column(db.Integer, db.ForeignKey('baike_doc.doc_id'))
     section_title = db.Column(db.String(255))
-    picture_url = db.Column(db.Text)
     text = db.Column(db.Text)
     page = db.relationship('BaiKeDoc', backref=db.backref('sections'))
 
     def __str__(self):
         return "<Section %r for BaiKe %d >" % self.section_title, self.baike_id
+
+
+class BaiKeItem(db.Model):
+    __tablename__ = 'baike_item'
+    item_id = db.Column(db.Integer, unique=True, primary_key=True)
+    baike_id = db.Column(db.Integer, db.ForeignKey('baike_doc.doc_id'))
+    item_title = db.Column(db.String(255))
+    text = db.Column(db.Text)
+    page = db.relationship('BaiKeDoc', backref=db.backref('items'))
+
+    def __str__(self):
+        return "<Section %r for BaiKe %d >" % self.section_title, self.baike_id
+
+
+class BaiKePicture(db.Model):
+    __tablename__ = 'baike_pic'
+    picture_id = db.Column(db.Integer, unique=True, primary_key=True)
+    baike_id = db.Column(db.Integer, db.ForeignKey('baike_doc.doc_id'))
+    picture_title = db.Column(db.Text)
+    picture_url = db.Column(db.Text)
+    page = db.relationship('BaiKeDoc', backref=db.backref('pictures'))
 
 
 class WordIndex(db.Model):

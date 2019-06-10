@@ -5,25 +5,25 @@ from app import db
 
 
 bafanglvren = BaiKeDoc(
-    doc_id=0,
+    doc_id=100000,
     title='八方旅人',
     description='角色扮演游戏《八方旅人》（Octopath Traveler）2018年7月13日登陆任天堂NS平台。 [1-3]  由任天堂公司负责国际发行， Square Enix 负责日本发行。 [4]  本作由Square Enix、Acquire，及制作TRPG的FarEast Amusement Research共同制作。 [5]  游戏采用虚幻4引擎打造，画面采用结合复古像素点阵与3DCG的风格。 [6]  《八方旅人》IGN评分9.3。 [6]  故事发生在名为奥斯泰拉的大陆，主人公是8名旅行者，玩家扮演其中之一在世界各地自由旅行。'
 )
 
 bafanglvren_0 = BaiKeSection(
-    baike_id=0,
+    baike_id=100000,
     section_title='中文化',
     text='香港任天堂宣布在19年6月7日发布《八方旅人》中文版，定名《歧路旅人》。 [8] 本次更新方式是在线补丁更新，将更新简体中文版、繁体中文版这两个版本。更新时间为北京时间6月7日10：00。 [8] ',
 )
 
 bafanglvren_1 = BaiKeSection(
-    baike_id=0,
+    baike_id=100000,
     section_title='故事背景',
     text='本作的故事发生在名为奥斯泰拉（オルステラ）的大陆，主人公是8名旅行者，玩家扮演其中之一在世界各地自由旅行，包括出生的地方也将成为旅行的目的地。',
 )
 
 bafanglvren_2 = BaiKeSection(
-    baike_id=0,
+    baike_id=100000,
     section_title='角色设定',
     text='游戏中可选八名角色分别为神官Ophilia、学者Cyrus、商人Tressa、剑士Olberic、舞女Primrose、药师Alfyn、盗贼Therion、猎人Haanit。 [9]\n 他们每人都有自己的技能和天赋，其中技能分为“正道”和“邪道”两种。游戏中使用“正道”技能不会失败，但会有着诸如等级之类的限制，需角色满足一定条件能发动；而“邪道”技能可对任何人使用，却有一定失败的几率，失败后玩家会与NPC关系变差，需在酒馆里使用金钱来改善关系。 [9] '
 )
@@ -75,20 +75,27 @@ ziyiweishi_1 = ZhiDaoAnswer(
 
 
 if __name__ == '__main__':
+    db.session.query(ZhiDaoAnswer).delete()
+    db.session.query(BaiKeSection).delete()
+    db.session.commit()
+    db.session.query(ZhiDaoDoc).delete()
+    db.session.query(BaiKeDoc).delete()
+    db.session.commit()
+
     db.session.add(ziyiweishi)
     db.session.commit()
     db.session.add_all([ziyiweishi_0, ziyiweishi_1])
     db.session.commit()
 
-    # db.session.add(bafanglvren)
-    # db.session.commit()
-    # db.session.add_all([bafanglvren_0, bafanglvren_1, bafanglvren_2])
-    # db.session.commit()
-    #
-    # db.session.add(nuoruo)
-    # db.session.commit()
-    # db.session.add_all([nuoruo_0, nuoruo_1, nuoruo_2])
-    # db.session.commit()
+    db.session.add(bafanglvren)
+    db.session.commit()
+    db.session.add_all([bafanglvren_0, bafanglvren_1, bafanglvren_2])
+    db.session.commit()
+
+    db.session.add(nuoruo)
+    db.session.commit()
+    db.session.add_all([nuoruo_0, nuoruo_1, nuoruo_2])
+    db.session.commit()
 
     doc = BaiKeDoc.query.filter(BaiKeDoc.title == '八方旅人').first()
     result = doc.sections
