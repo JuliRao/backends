@@ -106,7 +106,7 @@ def index_zhidao():
             db.session.rollback()
 
         if ct % 200 == 0:
-            print('process file', ct, time.ctime())
+            print(time.ctime(), 'process file', ct)
         ct += 1
     return ct
 
@@ -119,7 +119,7 @@ if __name__ == '__main__':
     #     page.is_indexed = False
     #
     # db.session.commit()
-    index_baike()
+    index_zhidao()
 
     # for page in ZhiDaoDoc.query.filter_by(is_indexed=True):
     #     page.is_indexed = False

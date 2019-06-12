@@ -1,5 +1,5 @@
-from _datetime import datetime
 from app import db
+from sqlalchemy.dialects.mysql import LONGTEXT
 import json
 
 
@@ -86,7 +86,7 @@ class ZhiDaoPicture(db.Model):
 class WordIndex(db.Model):
     __tablename__ = 'word_index'
     word = db.Column(db.String(255), unique=True, primary_key=True)
-    _index_list = db.Column(db.Text)
+    _index_list = db.Column(LONGTEXT)
 
     @property
     def index(self):

@@ -74,10 +74,10 @@ def get_page(id):
 
 
 if __name__ == '__main__':
-    result = search('中国，科学家')#, region='baike_title')
+    result = search('中国', region='zhidao_answer')
     for item in result:
         if isinstance(item, BaiKeDoc):
             print(item.title, item.description)
         else:
-            print(item.question)
+            print(item.question, item.description)
 
