@@ -3,42 +3,6 @@ from app import db
 import json
 
 
-class ZhiDaoDoc(db.Model):
-    __tablename__ = "zhidao_doc"
-    doc_id = db.Column(db.Integer, unique=True, primary_key=True, autoincrement=False)
-    question = db.Column(db.Text)
-    ask_time = db.Column(db.DateTime, default=datetime.utcnow)
-    is_indexed = db.Column(db.Boolean, default=False)
-
-    def __str__(self):
-        return "<Question %r>" % self.question
-
-
-class ZhiDaoAnswer(db.Model):
-    __tablename__ = 'zhidao_answer'
-    answer_id = db.Column(db.Integer, unique=True, primary_key=True)
-    question_id = db.Column(db.Integer, db.ForeignKey('zhidao_doc.doc_id'))
-    answer = db.Column(db.Text)
-    user_name = db.Column(db.String(255))
-    answer_time = db.Column(db.DateTime, default=datetime.utcnow)
-    likes = db.Column(db.Integer)
-    dislikes = db.Column(db.Integer)
-    accepted = db.Column(db.Boolean)
-    question = db.relationship('ZhiDaoDoc', backref=db.backref('answers'))
-
-    def __str__(self):
-        return "<Answer %d for question %d>" % self.answer_id, self.question_id
-
-
-class ZhiDaoPicture(db.Model):
-    __tablename__ = 'zhidao_pic'
-    picture_id = db.Column(db.Integer, unique=True, primary_key=True)
-    question_id = db.Column(db.Integer, db.ForeignKey('zhidao_doc.doc_id'))
-    picture_title = db.Column(db.Text)
-    picture_url = db.Column(db.Text)
-    question = db.relationship('ZhiDaoDoc', backref=db.backref('pictures'))
-
-
 class BaiKeDoc(db.Model):
     __tablename__ = 'baike_doc'
     doc_id = db.Column(db.Integer, unique=True, primary_key=True, autoincrement=False)
@@ -83,6 +47,42 @@ class BaiKePicture(db.Model):
     page = db.relationship('BaiKeDoc', backref=db.backref('pictures'))
 
 
+class ZhiDaoDoc(db.Model):
+    __tablename__ = "zhidao_doc"
+    doc_id = db.Column(db.Integer, unique=True, primary_key=True, autoincrement=False)
+    question = db.Column(db.Text)
+    description = db.Column(db.Text)
+    ask_time = db.Column(db.String(255))
+    is_indexed = db.Column(db.Boolean, default=False)
+
+    def __str__(self):
+        return "<Question %r>" % self.question
+
+
+class ZhiDaoAnswer(db.Model):
+    __tablename__ = 'zhidao_answer'
+    answer_id = db.Column(db.Integer, unique=True, primary_key=True, autoincrement=False)
+    question_id = db.Column(db.Integer, db.ForeignKey('zhidao_doc.doc_id'))
+    answer = db.Column(db.Text)
+    user_name = db.Column(db.String(255))
+    answer_time = db.Column(db.String(255))
+    likes = db.Column(db.Integer)
+    dislikes = db.Column(db.Integer)
+    accepted = db.Column(db.Boolean)
+    question = db.relationship('ZhiDaoDoc', backref=db.backref('answers'))
+
+    def __str__(self):
+        return "<Answer %d for question %d>" % self.answer_id, self.question_id
+
+
+class ZhiDaoPicture(db.Model):
+    __tablename__ = 'zhidao_pic'
+    picture_id = db.Column(db.Integer, unique=True, primary_key=True)
+    answer_id = db.Column(db.Integer, db.ForeignKey('zhidao_answer.answer_id'))
+    picture_url = db.Column(db.Text)
+    answer = db.relationship('ZhiDaoAnswer', backref=db.backref('pictures'))
+
+
 class WordIndex(db.Model):
     __tablename__ = 'word_index'
     word = db.Column(db.String(255), unique=True, primary_key=True)
@@ -99,7 +99,7 @@ class WordIndex(db.Model):
     def __str__(self):
         return self.word
 
-
-if __name__ == '__main__':
-    db.drop_all()
-    db.create_all()
+#
+# if __name__ == '__main__':
+#     db.drop_all()
+#     db.create_all()

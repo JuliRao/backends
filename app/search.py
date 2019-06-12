@@ -1,5 +1,5 @@
 from app.models import WordIndex, BaiKeDoc, ZhiDaoDoc
-from app.process import process, stopWords
+from app.process import process
 from math import log10
 
 
@@ -29,8 +29,6 @@ def tf_idf(words, regions):
         dic = tf[term]
         for docid, freq in dic.items():
             w = (1+log10(freq)) * (log10(N/len(dic)))
-            if term in stopWords:
-                w *= 0.3
             weight[docid] += w
 
     doc_list = []
@@ -76,10 +74,10 @@ def get_page(id):
 
 
 if __name__ == '__main__':
-    result = search('皇帝')
+    result = search('中国，科学家')#, region='baike_title')
     for item in result:
         if isinstance(item, BaiKeDoc):
-            print(item.description)
+            print(item.title, item.description)
         else:
             print(item.question)
 

@@ -1,6 +1,7 @@
 from app.models import ZhiDaoDoc, BaiKeDoc, WordIndex
 from app.process import process
 from app import db
+import time
 
 
 def index_baike():
@@ -21,6 +22,8 @@ def index_baike():
             section_words.update(process(item.text))
 
         for word, num in title_words.items():
+            if len(word) > 255:
+                continue
             li = WordIndex.query.filter_by(word = word)
             if li.count() > 0:
                 idx = li[0]
@@ -32,6 +35,8 @@ def index_baike():
             idx.index = saved
 
         for word, num in section_words.items():
+            if len(word) > 255:
+                continue
             li = WordIndex.query.filter_by(word=word)
             if li.count() > 0:
                 idx = li[0]
@@ -60,8 +65,14 @@ def index_baike():
 def index_zhidao():
     ct = 0
     for page in ZhiDaoDoc.query.filter_by(is_indexed = False):
-        words = process(page.question)
-        for word, num in words.items():
+        ques_words = process(page.question)
+        section_words = {}
+        for section in page.answers:
+            section_words.update(process(section.answer))
+
+        for word, num in ques_words.items():
+            if len(word) > 255:
+                continue
             li = WordIndex.query.filter_by(word = word)
             if li.count() > 0:
                 idx = li[0]
@@ -72,10 +83,9 @@ def index_zhidao():
             saved['zhidao_question'][page.doc_id] = num
             idx.index = saved
 
-        section_words = {}
-        for section in page.answers:
-            section_words.update(process(section.answer))
         for word, num in section_words.items():
+            if len(word) > 255:
+                continue
             li = WordIndex.query.filter_by(word=word)
             if li.count() > 0:
                 idx = li[0]
@@ -96,19 +106,19 @@ def index_zhidao():
             db.session.rollback()
 
         if ct % 200 == 0:
-            print('process file', ct)
+            print('process file', ct, time.ctime())
         ct += 1
     return ct
 
 
 if __name__ == '__main__':
-    rows = db.session.query(WordIndex).delete()
-    print('delete', rows, 'rows')
-
-    for page in BaiKeDoc.query.filter_by(is_indexed=True):
-        page.is_indexed = False
-
-    db.session.commit()
+    # rows = db.session.query(WordIndex).delete()
+    # print('delete', rows, 'rows')
+    #
+    # for page in BaiKeDoc.query.filter_by(is_indexed=True):
+    #     page.is_indexed = False
+    #
+    # db.session.commit()
     index_baike()
 
     # for page in ZhiDaoDoc.query.filter_by(is_indexed=True):
