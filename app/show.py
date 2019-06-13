@@ -1,6 +1,6 @@
 import json
 
-f = open('zhidao.json', 'r')
+f = open('zhidao/35.json', 'r')
 line = f.readline()
 
 content = json.loads(line)

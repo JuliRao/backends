@@ -119,7 +119,7 @@ if __name__ == '__main__':
     #     page.is_indexed = False
     #
     # db.session.commit()
-    index_zhidao()
+    index_baike()
 
     # for page in ZhiDaoDoc.query.filter_by(is_indexed=True):
     #     page.is_indexed = False

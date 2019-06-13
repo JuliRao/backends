@@ -45,7 +45,7 @@ def tf_idf(words, regions):
 def search(text, region='all'):
     '''
     :param text:
-    :param region: select from ['baike_title', 'baike_section', 'zhidao_question', 'zhidao_answer', 'url'], 'all' represents all places
+    :param region: select from ['baike_title', 'baike_section', 'zhidao_question', 'zhidao_answer', 'picture'], 'all' represents all places
     :return:
     '''
     words = process(text)
@@ -54,16 +54,17 @@ def search(text, region='all'):
     elif region in ['baike_title', 'baike_section', 'zhidao_question', 'zhidao_answer']:
         return tf_idf(words, [region])
     else:
-        print('no such region!!!')
-        assert 0
-
-    # else:
-    #     url_list = []
-    #     doc_list = tf_idf(words, ['baike_title', 'baike_section', 'zhidao_question', 'zhidao_answer'])
-    #     for doc in doc_list:
-    #         for pic in doc.pictures:
-    #             url_list.append(pic.picture_url)
-    #     return url_list
+        url_list = []
+        doc_list = tf_idf(words, ['baike_title', 'baike_section', 'zhidao_question', 'zhidao_answer'])
+        for doc in doc_list:
+            if isinstance(doc, BaiKeDoc):
+                for pic in doc.pictures:
+                    url_list.append(pic.picture_url)
+            else:
+                for answer in doc.answers:
+                    for pic in answer.pictures:
+                        url_list.append(pic.picture_url)
+        return url_list
 
 
 def get_page(id):
@@ -74,10 +75,11 @@ def get_page(id):
 
 
 if __name__ == '__main__':
-    result = search('中国', region='zhidao_answer')
-    for item in result:
-        if isinstance(item, BaiKeDoc):
-            print(item.title, item.description)
-        else:
-            print(item.question, item.description)
+    result = search('中国', region='picture')
+    print(result[0])
+    # for item in result:
+    #     if isinstance(item, BaiKeDoc):
+    #         print(item.title, item.description)
+    #     else:
+    #         print(item.question, item.description)
 
